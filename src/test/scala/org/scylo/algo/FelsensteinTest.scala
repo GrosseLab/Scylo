@@ -19,7 +19,7 @@ class FelsensteinTest extends FunSpec with Matchers {
 
       val dist = Felsenstein( model ).likelihood( tree )
 
-      println( dist.mkString(" ") )
+      //println( dist.mkString(" ") )
     }
 
   }
