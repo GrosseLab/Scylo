@@ -1,10 +1,32 @@
 package org.scylo.bio
 
-sealed trait Nuc
-case object A extends Nuc
-case object C extends Nuc
-case object G extends Nuc
-case object T extends Nuc
+sealed trait Nuc {
+
+  def isPyrimidine: Boolean
+
+  def isPurine: Boolean = !isPyrimidine
+
+}
+
+/** Adenin */
+case object A extends Nuc {
+  val isPyrimidine = false
+}
+
+/** Cytosine */
+case object C extends Nuc {
+  val isPyrimidine = true
+}
+
+/** Guanine */
+case object G extends Nuc {
+  val isPyrimidine = false
+}
+
+/** Thymine */
+case object T extends Nuc {
+  val isPyrimidine = true 
+}
 
 object DNA extends Alphabet[Nuc] {
 

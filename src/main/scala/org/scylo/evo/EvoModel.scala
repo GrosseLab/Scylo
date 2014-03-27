@@ -7,10 +7,24 @@ import org.scylo.bio._
 trait EvoModel[A] {
 
   /** Alphabet of the symbols. */
-  val alphabet: Alphabet[A]
+  def alphabet: Alphabet[A]
+
+  /** Rate of substituions */
+  def substitutionRate: Double
 
   /** Probability of a symbol in the stationary distribution. */
   def stationaryDistribution( of: A ): Double
+
+  /** Evolutionary distance of two sequences. 
+    * 
+    * In case the sequences are too divergent, a distance might not be
+    * defined in an evolutionary model.
+    * 
+    * @param seq1 a sequence
+    * @param seq2 a sequence
+    * @return evolutionary distance
+    */
+  def distance( seq1: List[A], seq2: List[A] ): Option[Double]
 
   /** Probability of a substituion in a given time.
     * 
