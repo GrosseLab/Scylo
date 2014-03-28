@@ -13,13 +13,18 @@ class FelsensteinTest extends FunSpec with Matchers {
 
     it("can comput the likelihood") {
       val model = JC69( 0.0005 )
-      val tree = Branch( 
-        10, Leaf(A),
-        20, Leaf(C))
 
-      val dist = Felsenstein( model ).likelihood( tree )
 
-      //println( dist.mkString(" ") )
+      var sum = 0.0
+      for( nuc1 <- DNA.elements; nuc2 <- DNA.elements ) {
+        val tree = Branch(
+          10, Leaf(nuc1),
+          20, Leaf(nuc2))
+
+        val like = Felsenstein( model ).likelihood( tree )
+        sum += like
+      }
+      println( sum )
     }
 
   }
