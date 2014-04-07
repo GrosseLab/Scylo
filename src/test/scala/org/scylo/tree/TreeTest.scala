@@ -39,6 +39,20 @@ class TreeTest extends FunSpec with Matchers {
       println( flippedTree.print("") )
     }
 
+    it("has heights") {
+      val tree =
+        Branch(
+          50, Branch(
+            10, Leaf(A),
+            20, Leaf(C)),
+          30, Leaf(T))
+
+
+      println( tree.heights() )
+
+      println( tree.leafs )
+    }
+
   }
 
 }

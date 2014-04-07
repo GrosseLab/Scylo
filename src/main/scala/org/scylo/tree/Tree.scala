@@ -17,6 +17,10 @@ sealed trait Tree[+A] {
 
   def nrOfLeafs: Int
 
+  def heights( height: Double = 0.0 ): List[Double]
+
+  def leafs: List[A]
+
 }
 
 case class Branch[+A]( timeLeft: Double, left: Tree[A], timeRight: Double, right: Tree[A] ) extends Tree[A] {
@@ -57,6 +61,11 @@ case class Branch[+A]( timeLeft: Double, left: Tree[A], timeRight: Double, right
 
   def nrOfLeafs: Int = left.nrOfLeafs + right.nrOfLeafs
 
+  def heights( height: Double ): List[Double] = 
+    left.heights( height + timeLeft ) ::: ( height +: right.heights( height + timeRight ))
+
+  def leafs: List[A] = left.leafs ::: right.leafs 
+
 }
 
 case class Leaf[+A]( value: A ) extends Tree[A] {
@@ -71,5 +80,8 @@ case class Leaf[+A]( value: A ) extends Tree[A] {
 
   def nrOfLeafs: Int = 1
 
-}
+  def heights( height: Double ): List[Double] = List( height )
 
+  def leafs: List[A] = List( value )
+
+}
