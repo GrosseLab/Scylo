@@ -34,7 +34,7 @@ case class Felsenstein[A]( model: EvoModel[A] ) {
     val rootDist = traverse(tree)
     var sum = 0.0
     for( nuc <- alphabet.elements ) {
-      sum += rootDist( alphabet.toInt( nuc ) ) * model.stationaryDistribution( nuc ) 
+      sum += rootDist( alphabet.toInt( nuc ) ) * model.statDist( nuc ) 
     }
     sum
   }

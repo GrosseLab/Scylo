@@ -17,7 +17,7 @@ case class JC69(rate: Double) extends EvoModel[Nuc] {
   def substitutionRate = 3 * rate
 
   /** The probability of a nucleotide in the stationary distribution. */
-  def stationaryDistribution(of: Nuc): Double = 0.25
+  def statDist(of: Nuc): Double = 0.25
 
   /**
    * Evolutionary distance of two sequences.
@@ -34,15 +34,17 @@ case class JC69(rate: Double) extends EvoModel[Nuc] {
     import org.scylo._
 
     val (mm, length) = countMismatches(seq1, seq2)
-    mm.toDouble / length match {
-      case p if p >= 0.75 => None
-      case p => Some(-0.75 * log(1 - 4.0 / 3 * p))
-    }
+    val p = mm.toDouble / length
+    if( p < 0.75 ) {
+      Some(-0.75 * log(1 - 4.0 / 3 * p)) 
+    } else None
   }
 
-  def substitutionProb(from: Nuc, to: Nuc, time: Double): Double = (from, to) match {
-    case (from, to) if from == to => 0.25 + 0.75 * exp(-4 * rate * time)
-    case _ => 0.25 - 0.25 * exp(-4 * rate * time)
-  }
+  def substitutionProb(from: Nuc, to: Nuc, time: Double): Double = 
+    if( from == to ) {
+      0.25 + 0.75 * exp(-4 * rate * time)
+    } else {
+      0.25 - 0.25 * exp(-4 * rate * time)
+    }
 
 }

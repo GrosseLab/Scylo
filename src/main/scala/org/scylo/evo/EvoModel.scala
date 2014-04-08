@@ -13,7 +13,7 @@ trait EvoModel[A] {
   def substitutionRate: Double
 
   /** Probability of a symbol in the stationary distribution. */
-  def stationaryDistribution( of: A ): Double
+  def statDist( of: A ): Double
 
   /** Evolutionary distance of two sequences. 
     * 

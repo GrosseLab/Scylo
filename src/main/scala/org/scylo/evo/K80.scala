@@ -24,7 +24,7 @@ case class K80(transitionRate: Double, transversionRate: Double) extends EvoMode
   def substitutionRate: Double = transitionRate + 2 * transversionRate
 
   /** The probability of a nucleotide in the stationary distribution. */
-  def stationaryDistribution(of: Nuc): Double = 0.25
+  def statDist(of: Nuc): Double = 0.25
 
   def distance(seq1: List[Nuc], seq2: List[Nuc]): Option[Double] = {
     val (transitions, transversions, length) = countTrans(seq1, seq2)
@@ -32,19 +32,18 @@ case class K80(transitionRate: Double, transversionRate: Double) extends EvoMode
     val transverProp = transversions.toDouble / length // proportion of transitions
     val firstLogArgument = 1 - 2 * transitProp - transverProp
     val secondLogArgument = 1 - 2 * transverProp
-    if (firstLogArgument <= 0 || secondLogArgument <= 0) // K80 undefined
-      None
-    else
+    if (firstLogArgument > 0.0 && secondLogArgument > 0.0) // K80 undefined
       Some(-0.5 * log(firstLogArgument) - 0.25 * log(secondLogArgument))
+    else
+      None
   }
 
-  def substitutionProb(from: Nuc, to: Nuc, time: Double): Double = (from, to) match {
-    case (from, to) if isTransition(from, to) =>
-      0.25 + 0.25 * exp(-4 * transversionRate * time) - 0.5 * exp(-2 * (transitionRate + transversionRate) * time)
-    case (from, to) if isTransversion(from, to) =>
-      0.25 - 0.25 * exp(-4 * transitionRate * time)
-    case _ =>
+  def substitutionProb(from: Nuc, to: Nuc, time: Double): Double = 
+    if( from == to ) { // match case
       0.25 + 0.25 * exp(-4 * transversionRate * time) + 0.5 * exp(-2 * (transitionRate + transversionRate) * time)
-  }
-
+    } else if( isTransition(from, to) ) { // transition case 
+      0.25 + 0.25 * exp(-4 * transversionRate * time) - 0.5 * exp(-2 * (transitionRate + transversionRate) * time)
+    } else { // transversion case
+      0.25 - 0.25 * exp(-4 * transitionRate * time)
+    } 
 }
