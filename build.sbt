@@ -9,8 +9,9 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq (
-		    "org.scalatest" % "scalatest_2.10" % "2.0.1-SNAP" % "test",
-		    "org.lanyard" %% "lanyard" % "0.0.1"
+  "com.googlecode.efficient-java-matrix-library" % "ejml" % "0.24",
+  "org.scalatest" % "scalatest_2.10" % "2.0.1-SNAP" % "test",
+  "org.lanyard" %% "lanyard" % "0.0.1"
 )
 
 scalacOptions ++= Seq ("-unchecked", "-feature", "-deprecation", "-optimize" )
