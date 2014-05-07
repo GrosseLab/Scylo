@@ -1,6 +1,6 @@
 package org.scylo.util
 
 case class EigenSystem private[util] ( 
-  private val eigenVec: Array[Array[Double]],
-  private val invEigenVec: Array[Array[Double]],
+  private val eigenVec: Matrix,
+  private val invEigenVec: Matrix,
   private val eigenVal: Array[Double] )

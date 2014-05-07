@@ -7,6 +7,8 @@ object LUDecomp extends (Matrix => LowerUpper) {
   private val TINY = 1E-40
 
   def apply( mat: Matrix ): LowerUpper = {
+    require( mat.rows == mat.columns, "LUDecomposition needs a square matrix.")
+
     val lu = Matrix.copy( mat )
     val index = new Array[Int]( mat.rows )
 
