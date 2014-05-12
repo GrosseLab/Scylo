@@ -22,6 +22,39 @@ class Matrix(val rows: Int, val columns: Int, private val values: Array[Double])
     builder.result
   }
 
+  def * ( scalar: Double): Matrix = scale( scalar )
+
+  def scale( scalar: Double ): Matrix = {
+    val array = new Array[Double]( rows * columns )
+    var i = 0
+    while( i < array.length ) {
+      array(i) /= scalar
+      i += 1
+    }
+    new Matrix( rows, columns, array )
+  }
+
+  def * (mat: Matrix): Matrix = multiply( mat )
+
+  def multiply( mat: Matrix ): Matrix = {
+    require( columns == mat.rows, "Matrices do not have matching dimensions for multiplication." )
+    val result = Matrix( rows, mat.columns )
+    var i, j, k = 0
+    while( i < rows ) {
+      j = 0
+      while( j < mat.columns ) {
+        k = 0
+        while( k < columns ) {
+          result(i, j) += apply(i, k) * mat(k, j)
+          k += 1
+        } // end while
+        j += 1
+      } // end while
+      i += 1
+    } // end while
+    result
+  }
+
 }
 
 object Matrix {
@@ -56,6 +89,16 @@ object Matrix {
 
   def ones(rows: Int, columns: Int): Matrix =
     new Matrix(rows, columns, Array.fill(rows * columns)(1.0))
+
+  def diag( elements: Array[Double] ): Matrix = {
+    val mat = Matrix( elements.length, elements.length )
+    var i = 0
+    while( i < elements.length ) {
+      mat(i, i) = elements(i)
+      i += 1
+    }
+    mat
+  }
 
   def id( rows: Int, columns: Int ): Matrix = {
     val mat = ones( rows, columns)

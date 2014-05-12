@@ -33,13 +33,20 @@ case class GTR(rateAC: Double, rateAG: Double, rateAT: Double, rateCG: Double, r
   val piGs = sqrt( piG )
   val piTs = sqrt( piT )
 
-  val B = Matrix.wrap( 3, 3, Array(
-    diagA, rateAC * piCs * piAs, rateAG * piGs * piAs, rateAT * piTs * piAs,
-    rateAC * piAs * piCs, diagC, rateCG * piGs * piCs, rateCT * piTs * piCs,
-    rateAG * piAs * piGs, rateCG * piCs * piGs, diagC, rateGT * piTs * piGs,
-    rateAT * piAs * piTs, rateCT * piCs * piTs, rateGT * piG * piTs, diagT))
+  val scaledQ = Matrix.wrap( 3, 3, Array(
+    diagA, rateAC * piC, rateAG * piG, rateAT * piT,
+    rateAC * piA, diagC, rateCG * piG, rateCT * piT,
+    rateAG * piA, rateCG * piC, diagC, rateGT * piT,
+    rateAT * piA, rateCT * piC, rateGT * piG, diagT)) * scale
 
-  val EigenSystem(r, ri, lambda) = SymEigenDecomp( B )
+  val EigenSystem(r, ri, lambda) = SymEigenDecomp( scaledQ )
 
+  val (left, right) = (0, 0)
+
+  /** in-place multiplication. Columnwise */
+  private def leftMult( mat: Matrix, diag: Array[Double] ): Unit = ???
+
+  /** in-place multiplication. Rowwise */
+  private def rightMult( mat: Matrix, diag: Array[Double] ): Unit = ???
 
 }

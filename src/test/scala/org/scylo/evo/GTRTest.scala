@@ -21,9 +21,8 @@ class GTRTest extends FunSpec with Matchers {
 
       val model = GTR(rateAC, rateAG, rateAT, rateCG, rateCT, piA, piC, piG, piT)
 
-      model.B.print
+      val test = model.left
 
-      model.E.print
     }
   }
 
