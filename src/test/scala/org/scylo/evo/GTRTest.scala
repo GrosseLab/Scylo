@@ -2,6 +2,7 @@ package org.scylo.evo
 
 import org.scalatest.FunSpec
 import org.scalatest.Matchers
+import org.scylo.bio._
 
 class GTRTest extends FunSpec with Matchers {
 
@@ -21,7 +22,10 @@ class GTRTest extends FunSpec with Matchers {
 
       val model = GTR(rateAC, rateAG, rateAT, rateCG, rateCT, piA, piC, piG, piT)
 
-      val test = model.left
+      println( model.substitutionProb(A, A, 1.0) )
+      println( model.substitutionProb(A, C, 1.0) )
+      println( model.substitutionProb(A, G, 1.0) )
+      println( model.substitutionProb(A, T, 1.0) )
 
     }
   }

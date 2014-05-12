@@ -1,6 +1,6 @@
 package org.scylo.util
 
-class Matrix(val rows: Int, val columns: Int, private val values: Array[Double]) {
+class Matrix(val rows: Int, val columns: Int, private[Matrix] val values: Array[Double]) {
 
   require(rows > 0, "Can not initiate matrix with less than one row.")
   require(columns > 0, "Can not initiate matrix with less than one column.")
@@ -26,6 +26,7 @@ class Matrix(val rows: Int, val columns: Int, private val values: Array[Double])
 
   def scale( scalar: Double ): Matrix = {
     val array = new Array[Double]( rows * columns )
+    System.arraycopy(values, 0, array, 0, rows * columns )
     var i = 0
     while( i < array.length ) {
       array(i) /= scalar
