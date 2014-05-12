@@ -1,31 +1,37 @@
 package org.scylo.util
 
 /** Eigen decomposition of symmetric matrices. */
-case object SymEigenDecomp extends (Matrix => EigenSystem) {
+object SymEigenDecomp extends (Matrix => EigenSystem) {
 
   import math._
 
   private val EPSILON = 2.3E-16
 
   def apply(mat: Matrix): EigenSystem = {
-
-    null
+    val (z, d, e) = toTriDiag(mat)
+    eigOfTriDiag(z, d, e)
+    eigSort(d, z)
+    val lu = LUDecomp( z)
+    EigenSystem(z, lu.inverse, d)
   }
 
   private def toTriDiag(mat: Matrix): (Matrix, Array[Double], Array[Double]) = {
     var g = 0.0
     var l, k, j, i = 0
+    var scale, hh, h, f = 0.0
+    val n = mat.rows
     val z = Matrix.copy(mat)
-    val d = new Array[Double](mat.rows)
-    val e = new Array[Double](mat.rows)
+    val d = new Array[Double](n)
+    val e = new Array[Double](n)
 
-    i = mat.rows - 1
+    i = n - 1
     while (i > 0) {
-      var scale, hh, h, f = 0.0
       l = i - 1
+      h = 0.0
+      scale = 0.0
       if (l > 0) {
         k = 0
-        while (k < i) { scale += abs(mat(i, k)); k += 1 }
+        while (k < i) { scale += abs(z(i, k)); k += 1 }
         if (scale == 0.0) {
           e(i) = z(i, l)
         } else { // end if
@@ -33,9 +39,9 @@ case object SymEigenDecomp extends (Matrix => EigenSystem) {
           while (k < i) {
             z(i, k) /= scale
             h += z(i, k) * z(i, k)
-            i += 1
+            k += 1
           } // end while
-          f = z(i, i)
+          f = z(i, l)
           g = if (f >= 0.0) -sqrt(h) else sqrt(h)
           e(i) = scale * g
           h -= f * g
@@ -94,7 +100,6 @@ case object SymEigenDecomp extends (Matrix => EigenSystem) {
       }
       i += 1
     } // end while
-
     (z, d, e)
   }
 
@@ -115,27 +120,27 @@ case object SymEigenDecomp extends (Matrix => EigenSystem) {
     }
   }
 
-  private def eigOfTriDiag(mat: Matrix, d: Array[Double], e: Array[Double]): (Array[Double], Matrix) = {
+  private def eigOfTriDiag(z: Matrix, d: Array[Double], e: Array[Double]): Unit = {
     var m, l, iter, i, k = 0
     var s, r, p, g, f, dd, c, b = 0.0
-    var break = true
+    var break1, break2 = true
     val n = e.length
 
     i = 1
     while (i < n) { e(i - 1) = e(i); i += 1 }
-    e(e.length - 1) = 0.0
+    e(n - 1) = 0.0
 
     while (l < n) {
-      break = true
       iter = 0
       do {
         m = l
-        while (m < n - 1 && break) {
+        break1 = true
+        while (m < n - 1 && break1) {
           dd = abs(d(m)) + abs(d(m + 1))
-          if (abs(e(m)) <= EPSILON * dd) { break = false }
-          m += 1
+          if (abs(e(m)) <= EPSILON * dd) {
+            break1 = false
+          } else { m += 1 }
         } // end while
-
         if (m != l) {
           iter += 1
           if (iter == 30) throw new Exception("bums")
@@ -147,8 +152,8 @@ case object SymEigenDecomp extends (Matrix => EigenSystem) {
           p = 0.0
 
           i = m - 1
-          break = true
-          while (i >= l && break) {
+          break2 = true
+          while (i >= l && break2) {
             f = s * e(i)
             b = c * e(i)
             r = pythag(f, g)
@@ -156,9 +161,9 @@ case object SymEigenDecomp extends (Matrix => EigenSystem) {
             if (r == 0.0) {
               d(i + 1) -= p
               e(m) = 0.0
-              break = false
+              break2 = false
             }
-            if (break) {
+            if (break2) {
               s = f / r
               c = g / r
               g = d(i + 1) - p
@@ -169,34 +174,34 @@ case object SymEigenDecomp extends (Matrix => EigenSystem) {
 
               k = 0
               while (k < n) {
-                f = mat(k, i+1)
-                mat(k, i+1) = s * mat(k, i) + c * f
-                mat(k, i) = c * mat(k, i) - s * f
+                f = z(k, i + 1)
+                z(k, i + 1) = s * z(k, i) + c * f
+                z(k, i) = c * z(k, i) - s * f
                 k += 1
               } // end while
+              i -= 1
             } // end if
           } // end while
 
-          if( !(r == 0.0 && i >= l ) ) {
+          if (!(r == 0.0 && i >= l)) {
             d(l) -= p
             e(l) = g
             e(m) = 0.0
           }
-          i -= 1
         } // end if
       } while (m != l) // end do-while
       l += 1
     } // end while
-    (d, mat)
   }
 
-  private def sort(d: Array[Double], v: Matrix): EigenSystem = {
+  private def eigSort(d: Array[Double], z: Matrix): Unit = {
     var i, j = 0
-    while (i < d.length - 1) {
+    val n = d.length
+    while (i < n - 1) {
       var k = i
       var p = d(k)
       j = i
-      while (j < d.length) {
+      while (j < n) {
         if (d(j) >= p) {
           k = j
           p = d(k)
@@ -207,15 +212,14 @@ case object SymEigenDecomp extends (Matrix => EigenSystem) {
         d(k) = d(i)
         d(i) = p
         j = 0
-        while (j < d.length) {
-          p = v(j, i)
-          v(j, i) = v(j, k)
-          v(j, k) = p
+        while (j < n) {
+          p = z(j, i)
+          z(j, i) = z(j, k)
+          z(j, k) = p
           j += 1
         }
       }
       i += 1
     }
-    EigenSystem(v, v, null)
   }
 }
