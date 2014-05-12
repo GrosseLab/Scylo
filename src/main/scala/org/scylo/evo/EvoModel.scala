@@ -1,10 +1,10 @@
 package org.scylo.evo
 
-import org.lanyard.random.RNG
+import org.lanyard.random._
 import org.scylo.bio._
 
 /** Models of sequence evolution. */
-trait EvoModel[A] {
+trait EvoModel[A] extends Random[(A,A)] {
 
   /** Alphabet of the symbols. */
   def alphabet: Alphabet[A]
@@ -34,6 +34,13 @@ trait EvoModel[A] {
     * @return probability of the substituion 
     */
   def substitutionProb( from: A, to: A, time: Double ): Double
+
+  /** Draws a nucleotide and a possibly mutated nucleotide depending on the first one.
+    * 
+    * @param source source of randomness
+    * @return a nucleotide and its possible mutation
+    */
+  def random( source: RNG ): ((A, A), RNG) = ???
 
   /** Mutates a symbol.
     * 
