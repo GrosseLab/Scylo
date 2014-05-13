@@ -19,6 +19,8 @@ case class F81 ( statA: Double, statC: Double, statG: Double, statT: Double, sub
   require( abs(statA + statC + statG + statT - 1 ) <= 1E-10, "F81 parameter statDist has to sum to 1. Found statinary distribution: " + 
     s"($statA, $statC, $statG, $statT)") 
 
+  def this( stat: Array[Double], substitutionRate: Double) = this(stat(0), stat(1), stat(2), stat(3), substitutionRate)
+
   /** Array of stationary distribution. Mainly here for optimization. */
   private val stationaryDistribution = Array( statA, statC, statG, statT )
 

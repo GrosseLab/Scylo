@@ -47,4 +47,6 @@ case class JC69(rate: Double) extends EvoModel[Nuc] {
       0.25 - 0.25 * exp(-4 * rate * time)
     }
 
+  def withTime( t: Double ) = new JC69Fixed(rate, t)
+
 }

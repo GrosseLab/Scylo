@@ -22,10 +22,14 @@ class GTRTest extends FunSpec with Matchers {
 
       val model = GTR(rateAC, rateAG, rateAT, rateCG, rateCT, piA, piC, piG, piT)
 
-      println( model.substitutionProb(A, A, 1.0) )
-      println( model.substitutionProb(A, C, 1.0) )
-      println( model.substitutionProb(A, G, 1.0) )
-      println( model.substitutionProb(A, T, 1.0) )
+      val probs = Array(
+      model.substitutionProb(A, A, 0.1),
+      model.substitutionProb(A, C, 0.1),
+      model.substitutionProb(A, G, 0.1),
+      model.substitutionProb(A, T, 0.1))
+
+      println( probs.mkString(" ") )
+      println( probs.sum )
 
     }
   }
