@@ -44,6 +44,6 @@ case class K80(transitionRate: Double, transversionRate: Double) extends EvoMode
     } else if( isTransition(from, to) ) { // transition case 
       0.25 + 0.25 * exp(-4 * transversionRate * time) - 0.5 * exp(-2 * (transitionRate + transversionRate) * time)
     } else { // transversion case
-      0.25 - 0.25 * exp(-4 * transitionRate * time)
+      0.25 - 0.25 * exp(-4 * transversionRate * time)
     } 
 }
