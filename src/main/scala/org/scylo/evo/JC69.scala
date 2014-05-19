@@ -5,7 +5,17 @@ import org.lanyard.random.Random
 import org.scylo.bio.DNA
 import org.scylo.bio.Nuc
 
-/** Source: "Jukes, TH. and Cantor, CR. 1969. 'Evolution of Protein Molecules' New York: Academic Press. pp. 21–132 */
+/**
+ * The Jukes-Cantor model of nucleotide substitutions. It assumes that
+ * every nucleotide has the same `rate` of changing into any other
+ * nucleotide.
+ *
+ * Source: "Jukes, TH. and Cantor, CR. 1969. 'Evolution of Protein Molecules' New
+ * York: Academic Press. pp. 21–132
+ *
+ * @constructor Creates a Jukes-Cantor model
+ * @param rate rate of change from one nucleotide to another
+ */
 case class JC69(rate: Double) extends EvoModel[Nuc] {
 
   import math._
@@ -35,18 +45,52 @@ case class JC69(rate: Double) extends EvoModel[Nuc] {
 
     val (mm, length) = countMismatches(seq1, seq2)
     val p = mm.toDouble / length
-    if( p < 0.75 ) {
-      Some(-0.75 * log(1 - 4.0 / 3 * p)) 
+    if (p < 0.75) {
+      Some(-0.75 * log(1 - 4.0 / 3 * p))
     } else None
   }
 
-  def substitutionProb(from: Nuc, to: Nuc, time: Double): Double = 
-    if( from == to ) {
+  /**
+   * Computes the probability of a substitution in a given time interval.
+   *
+   * @param from ancestral nucleotide
+   * @param to present nucleotide
+   * @param time time to evolve
+   */
+  def substitutionProb(from: Nuc, to: Nuc, time: Double): Double =
+    if (from == to) {
       0.25 + 0.75 * exp(-4 * rate * time)
     } else {
       0.25 - 0.25 * exp(-4 * rate * time)
     }
 
-  def withTime( t: Double ) = new JC69Fixed(rate, t)
+  /**
+   * Fixes the time parameter for the evolutionary process.
+   *
+   * This is mainly for improved performance if time remains constant
+   * for several computations.
+   *
+   * @param time fixed time
+   * @return Jukes-Cantor model with fixed time
+   */
+  def withTime(t: Double) = new JC69Fixed(rate, t)
+
+  def gammaRate(alpha: Double): Unit = ???
+
+}
+
+object JC69 {
+
+  /**
+   * Returns a Jukes-Cantor model with three times the rate.
+   *
+   * This method is mainly for convenience. The JC69 model is
+   * sometimes introduced with a different definition of the rate
+   * parameter. This method converts between the two definitions.
+   *
+   * @param rate substitution rate of the JC69 model
+   * @return JC69 model with given substitution rate
+   */
+  def withSubstRate(rate: Double): JC69 = JC69(rate / 3)
 
 }

@@ -2,7 +2,6 @@ package org.scylo.evo
 
 import org.scylo.bio._
 import org.scylo._
-import scala.annotation.switch
 
 /** The Felsenstein model.
   * 
