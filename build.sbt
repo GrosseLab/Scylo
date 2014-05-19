@@ -13,6 +13,7 @@ libraryDependencies ++= Seq (
 //  "gov.nist.math" % "jama" % "1.0.3",
   "com.googlecode.efficient-java-matrix-library" % "ejml" % "0.24",
   "org.scalatest" % "scalatest_2.10" % "2.0.1-SNAP" % "test",
+  "org.scalacheck" %% "scalacheck" % "1.11.0" % "test",
   "org.lanyard" %% "lanyard" % "0.0.1"
 )
 

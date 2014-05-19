@@ -42,7 +42,11 @@ case object T extends Nuc {
 
 object DNA extends Alphabet[Nuc] {
 
+  private val nucs = Array(A, C, G, T)
+
   val elements = List(A, C, G, T)
+
+  def fromInt( index: Int ): Nuc = nucs( index )
 
 }
 

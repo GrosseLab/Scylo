@@ -1,15 +1,33 @@
 package org.scylo.evo
 
+import org.scalacheck.Gen
+
 import org.scylo.bio._
 
 import org.lanyard.random.KISS
 
 import org.scalatest.FunSpec
 import org.scalatest.Matchers
+import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
-class JC69Test extends FunSpec with Matchers {
+class JC69Test extends FunSpec with Matchers with GeneratorDrivenPropertyChecks {
+
+  import JC69Test._
 
   describe("The Jukes-Cantor model") {
+
+    it("is a proper probability distribution") {
+      forAll( 
+        (JC69gen, "Jukes-Cantor model"),
+        (Gen.choose( 0.0, 20.0), "time")
+      ) { (jc: JC69, time: Double) =>
+        for( from <- List(A, C, G, T) ) {
+          val probs = List(A, C, G, T).map( jc.withTime( time ) ? (from, _ )).sum
+          probs should be( 1.0 +- 1E-15)
+        }
+      }
+
+    }
 
     it("can mutate a nucleotide.") {
 
@@ -30,4 +48,14 @@ class JC69Test extends FunSpec with Matchers {
 
   }
 
+}
+
+object JC69Test {
+
+  val maxRate = 10.0
+  val maxTime = 20.0
+
+  val JC69gen = for {
+    rate <- Gen.choose(0.0, maxRate)
+  } yield JC69( rate )
 }
