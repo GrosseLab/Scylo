@@ -77,4 +77,6 @@ case class TN93(statA: Double, statC: Double, statG: Double, statT: Double, tran
     } else { // transversion case
       statDist(to) * (1.0 - exp(-transversionRate * time))
     }
+
+  def >> (time: Double): EvoModelFixed[Nuc] = ???
 }

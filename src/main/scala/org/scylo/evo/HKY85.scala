@@ -21,4 +21,6 @@ case class HKY95(statA: Double, statC: Double, statG: Double, statT: Double, tra
 
   def substitutionProb( form: Nuc, to: Nuc, time: Double): Double = ???
 
+  def >> (time: Double) = ???
+
 }

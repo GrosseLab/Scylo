@@ -5,18 +5,23 @@ import org.scylo._
 
 /** The Felsenstein model.
   * 
-  * @param statA probability of adenine in the stationary distribution
-  * @param statC probability of cytosine in the stationary distribution
-  * @param statG probability of guanine in the stationary distribution
-  * @param statT probability of thymine in the stationary distribution
+  * @constructor Creates a F81 model
+  * @param statA stationary distribution of adenine
+  * @param statC stationary distribution of cytosine
+  * @param statG stationary distribution of guanine 
+  * @param statT stationary distribution of thymine
   * @param substitutionRate substitution rate
   */
 case class F81 ( statA: Double, statC: Double, statG: Double, statT: Double, substitutionRate: Double ) extends EvoModel[Nuc] {
 
   import math._
 
-  require( abs(statA + statC + statG + statT - 1 ) <= 1E-10, "F81 parameter statDist has to sum to 1. Found statinary distribution: " + 
+  require( abs(statA + statC + statG + statT - 1 ) <= 1E-10, "F81 parameters statDist have to sum to 1. Found statinary distribution: " + 
     s"($statA, $statC, $statG, $statT)") 
+  require( statA >= 0, s"F81 parameter statA needs to be positive, Found value: $statA")
+  require( statC >= 0, s"F81 parameter statC needs to be positive, Found value: $statC")
+  require( statG >= 0, s"F81 parameter statG needs to be positive, Found value: $statG")
+  require( statT >= 0, s"F81 parameter statT needs to be positive, Found value: $statT")
 
   def this( stat: Array[Double], substitutionRate: Double) = this(stat(0), stat(1), stat(2), stat(3), substitutionRate)
 
@@ -46,10 +51,6 @@ case class F81 ( statA: Double, statC: Double, statG: Double, statT: Double, sub
     else
       (1 - exp( -substitutionRate * time)) * statDist(to)
 
-}
-
-object F81 {
-
-  def formArray( statDist: Array[Double], substitutionRate: Double ): F81 = new F81( statDist(0), statDist(1), statDist(2), statDist(3), substitutionRate )
+  def >> (time: Double ) = F81Fixed( statA, statC, statG, statT, substitutionRate, time)
 
 }

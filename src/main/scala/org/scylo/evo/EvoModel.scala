@@ -35,6 +35,9 @@ trait EvoModel[A] {
     */
   def substitutionProb( from: A, to: A, time: Double ): Double
 
+  /** Symbolic alias for substitutionProb */
+  def |?| (from: A, to: A, time: Double): Double = substitutionProb(from, to, time)
+
   /** Mutates a symbol.
     * 
     * @param from symbol to evolve from
@@ -63,5 +66,7 @@ trait EvoModel[A] {
       (newSymbol :: acc._1, nextRNG)
     }
   }
+
+  def >> (time: Double): EvoModelFixed[A]
 
 }

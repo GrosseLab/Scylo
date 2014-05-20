@@ -16,46 +16,47 @@ class JC69Test extends FunSpec with Matchers with GeneratorDrivenPropertyChecks 
 
   describe("The Jukes-Cantor model") {
 
-    it("is a proper probability distribution") {
-      forAll( 
-        (JC69gen, "Jukes-Cantor model"),
-        (Gen.choose( 0.0, 20.0), "time")
-      ) { (jc: JC69, time: Double) =>
-        for( from <- List(A, C, G, T) ) {
-          val probs = List(A, C, G, T).map( jc.withTime( time ) ? (from, _ )).sum
-          probs should be( 1.0 +- 1E-15)
+    it("forms proper probability distributions.") {
+      forAll((JC69Gen, "Jukes-Cantor model"), (Gen.choose(0.0, 200.0), "time")) { (jc: JC69, time: Double) =>
+        /** Make sure the transition probabilities some to one. */
+        for (from <- DNA.elements) {
+          DNA.elements.map { to => jc |?| (from, to, time) }.sum should be(1.0 +- 1E-15)
         }
       }
-
     }
-
-    it("can mutate a nucleotide.") {
-
-      val rng = KISS(482394234552L)
-      val jc = JC69(0.1)
-      val tmp = List(A, C, G, T, A, A, G, C, T, A, T, A, T, A, C, T, A, T, A, G, G, G, C, G, T, A, A, C, T)
-      val seq = tmp ::: tmp ::: tmp ::: tmp ::: tmp ::: tmp
-
-      val (mutant, nextRNG) = jc.mutate(seq, 100, rng)
-
-      val matches = seq.zip(mutant).count { pair => pair._1 == pair._2 }
-
-      println(seq.mkString)
-      println(mutant.mkString)
-      println( matches + " of: " + seq.length )
-
-    }
-
   }
 
+  describe("The Jukes-Cantor model with fixed time") {
+
+    it("computes the same probabilities as JC69 with given time.") {
+      forAll(
+        (JC69GenFixed, "Fixed-time Jukes-Cantor model"),
+        (Gen.oneOf(A, C, G, T), "from"),
+        (Gen.oneOf(A, C, G, T), "to")) { (jcf: JC69Fixed, from: Nuc, to: Nuc) =>
+            /** Make sure both models compute the same probabilities. */
+            jcf |?| (from, to) should be(jcf.unfix |?| (from, to, jcf.time))
+      }
+    }
+  }
 }
 
 object JC69Test {
 
-  val maxRate = 10.0
-  val maxTime = 20.0
+  /** Maximal tested rate of substitution. */
+  val maxRate = 20.0
 
-  val JC69gen = for {
+  /** Generator for Jukes-Cantor models. */
+  val JC69Gen = for {
     rate <- Gen.choose(0.0, maxRate)
-  } yield JC69( rate )
+  } yield JC69(rate)
+
+  /** Maximal tested time of evolution. */
+  val maxTime = 200.0
+
+  /** Generator for fixed time Jukes-Cantor models. */
+  val JC69GenFixed = for {
+    jc <- JC69Gen
+    time <- Gen.choose(0.0, maxTime)
+  } yield jc >> time
+
 }

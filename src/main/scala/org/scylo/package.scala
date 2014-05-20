@@ -4,11 +4,11 @@ import org.scylo.bio._
 
 package object scylo {
 
-  @inline def isSubstitution(nuc1: Nuc, nuc2: Nuc): Boolean = nuc1 != nuc2
+  def isSubstitution(nuc1: Nuc, nuc2: Nuc): Boolean = nuc1 != nuc2
 
-  @inline def isTransition(nuc1: Nuc, nuc2: Nuc): Boolean = (nuc1.isPurine && nuc2.isPurine) || (nuc1.isPyrimidine && nuc2.isPyrimidine)
+  def isTransition(nuc1: Nuc, nuc2: Nuc): Boolean = (nuc1.isPurine && nuc2.isPurine) || (nuc1.isPyrimidine && nuc2.isPyrimidine)
 
-  @inline def isTransversion(nuc1: Nuc, nuc2: Nuc): Boolean = (nuc1.isPurine && nuc2.isPyrimidine) || (nuc1.isPyrimidine && nuc2.isPurine)
+  def isTransversion(nuc1: Nuc, nuc2: Nuc): Boolean = (nuc1.isPurine && nuc2.isPyrimidine) || (nuc1.isPyrimidine && nuc2.isPurine)
 
   def countMismatches[A](seq1: List[A], seq2: List[A]): (Int, Int) = countWithLength(seq1, seq2)(_ != _)
 

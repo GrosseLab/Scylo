@@ -1,9 +1,6 @@
 package org.scylo.evo
 
-import org.lanyard.random.RNG
-import org.lanyard.random.Random
-import org.scylo.bio.DNA
-import org.scylo.bio.Nuc
+import org.scylo.bio.{DNA, Nuc}
 
 /**
  * The Jukes-Cantor model of nucleotide substitutions. It assumes that
@@ -17,6 +14,8 @@ import org.scylo.bio.Nuc
  * @param rate rate of change from one nucleotide to another
  */
 case class JC69(rate: Double) extends EvoModel[Nuc] {
+
+  require( rate >= 0.0, s"JC69 parameter rate needs to be positive. Found value: $rate")
 
   import math._
 
@@ -74,6 +73,9 @@ case class JC69(rate: Double) extends EvoModel[Nuc] {
    * @return Jukes-Cantor model with fixed time
    */
   def withTime(t: Double) = new JC69Fixed(rate, t)
+
+  /** Symbolic shortcut for withTime. */
+  def >> (t: Double) = withTime(t)
 
   def gammaRate(alpha: Double): Unit = ???
 
