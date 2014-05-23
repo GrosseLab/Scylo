@@ -19,9 +19,10 @@ class JC69Test extends FunSpec with Matchers with GeneratorDrivenPropertyChecks 
     it("forms proper probability distributions.") {
       forAll((JC69Gen, "Jukes-Cantor model"), (Gen.choose(0.0, 200.0), "time")) { (jc: JC69, time: Double) =>
         /** Make sure the transition probabilities some to one. */
-        for (from <- DNA.elements) {
-          DNA.elements.map { to => jc |?| (from, to, time) }.sum should be(1.0 +- 1E-15)
-        }
+        DNA.elements.map { to => jc |?| (A, to, time) }.sum should be(1.0 +- 1E-15)
+        DNA.elements.map { to => jc |?| (C, to, time) }.sum should be(1.0 +- 1E-15)
+        DNA.elements.map { to => jc |?| (G, to, time) }.sum should be(1.0 +- 1E-15)
+        DNA.elements.map { to => jc |?| (T, to, time) }.sum should be(1.0 +- 1E-15)
       }
     }
   }

@@ -26,7 +26,7 @@ case class TN93(statA: Double, statC: Double, statG: Double, statT: Double, tran
 
   /** Auxillary variavles often used in the transition matrix. */
   private val firstFactorDiag = plusTC / plusAG
-  private val secondFactorDiag = Array(statG / plusAG, statT / plusTC, statC / plusAG, statA / plusTC)
+  private val secondFactorDiag = Array(statG / plusAG, statT / plusTC, statA / plusAG, statC / plusTC)
 
   def alphabet: Alphabet[Nuc] = DNA
 
@@ -66,17 +66,17 @@ case class TN93(statA: Double, statC: Double, statG: Double, statT: Double, tran
           statDist(to) * firstFactorDiag * exp(-transversionRate * time) +
           secondFactorDiag(from.index) * exp(-(plusAG * transitionRateAG + plusTC * transversionRate) * time)
       }
-    } else if ((from == A && to == G) || (from == G && to == A)) { // AG transition case
-      statDist(to) +
-        statDist(to) / firstFactorDiag * exp(-transversionRate * time) -
-        statDist(to) / plusTC * exp(-(plusTC * transitionRateCT + plusAG * transversionRate) * time)
-    } else if ((from == T && to == C) || (from == C && to == T)) { // TC transition case
+    } else if (from == A && to == G || from == G && to == A) { // AG transition case
       statDist(to) +
         statDist(to) * firstFactorDiag * exp(-transversionRate * time) -
         statDist(to) / plusAG * exp(-(plusAG * transitionRateAG + plusTC * transversionRate) * time)
+    } else if (from == T && to == C || from == C && to == T) { // TC transition case
+      statDist(to) +
+        statDist(to) / firstFactorDiag * exp(-transversionRate * time) -
+        statDist(to) / plusTC * exp(-(plusTC * transitionRateCT + plusAG * transversionRate) * time)
     } else { // transversion case
       statDist(to) * (1.0 - exp(-transversionRate * time))
     }
 
-  def >> (time: Double): EvoModelFixed[Nuc] = ???
+  def >> (time: Double) = TN93Fixed(statA, statC, statG, statT, transitionRateAG, transitionRateCT, transversionRate, time)
 }

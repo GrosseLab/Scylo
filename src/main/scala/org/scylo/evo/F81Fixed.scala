@@ -4,6 +4,16 @@ import org.lanyard.random.RNG
 import org.scylo.bio.DNA
 import org.scylo.bio.Nuc
 
+/** The Felsenstein 81 model with fixed time.
+  * 
+  * @constructor Creates a F81 model with fixed time
+  * @param statA stationary distribution of adenine
+  * @param statC stationary distribution of cytosine
+  * @param statG stationary distribution of guanine 
+  * @param statT stationary distribution of thymine
+  * @param substitutionRate substitution rate
+  * @param time time passed in evolution
+  */
 case class F81Fixed( statA: Double, statC: Double, statG: Double, statT: Double, substitutionRate: Double, time: Double ) extends EvoModelFixed[Nuc] {
 
   import math._

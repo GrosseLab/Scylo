@@ -5,7 +5,7 @@ case class F81G(statA: Double, statC: Double, statG: Double, statT: Double, subs
   import math._
   import org.scylo.bio.Nuc
 
-  require(abs(statA + statC + statG + statT - 1) <= 1E-10, "F81 parameter statDist has to sum to 1. Found statinary distribution: " +
+  require(abs(statA + statC + statG + statT - 1) <= 1E-10, "F81G parameter statDist has to sum to 1. Found statinary distribution: " +
     s"($statA, $statC, $statG, $statT)")
 
   /** Array of stationary distribution. Mainly here for optimization. */

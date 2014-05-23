@@ -3,7 +3,7 @@ package org.scylo.evo
 import org.scylo.bio._
 import org.scylo._
 
-/** The Felsenstein model.
+/** The Felsenstein 81 model.
   * 
   * @constructor Creates a F81 model
   * @param statA stationary distribution of adenine
@@ -32,9 +32,12 @@ case class F81 ( statA: Double, statC: Double, statG: Double, statT: Double, sub
 
   def statDist( of: Nuc ): Double = stationaryDistribution( of.index )
 
-  /** Tajima F, Nei M. Biases of the estimates of DNA divergence
+  /** 
+    * Returns the phylogenetic distance between two sequences.
+    * 
+    * Source: 'Tajima F, Nei M. Biases of the estimates of DNA divergence
     * obtained by the restriction enzyme technique. J Mol
-    * Evol. 1982;18(2):115-20. PubMed PMID: 6284946. 
+    * Evol. 1982;18(2):115-20. PubMed PMID: 6284946.'
     */
   def distance( seq1: List[Nuc], seq2: List[Nuc] ): Option[Double] = {
     val tmp = 1.0 - ( statA * statA + statC * statC + statG * statG + statT * statT )
