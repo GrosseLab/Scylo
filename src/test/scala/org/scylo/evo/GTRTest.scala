@@ -9,9 +9,9 @@ class GTRTest extends FunSpec with Matchers {
   describe("The general time-reversible model") {
     it("has the correct rate matrix.") {
       /** This example is taken from Yang (1994b). */
-      val piT = 0.308
-      val piC = 0.185
-      val piG = 0.199
+      val piT = 0.25
+      val piC = 0.25
+      val piG = 0.25
       val piA = 1 - (piC + piG + piT)
       val rateAC = 1.0 // d 0.243
       val rateAG = 1.0 // f 1.0
@@ -23,10 +23,10 @@ class GTRTest extends FunSpec with Matchers {
       val model = GTR(rateAC, rateAG, rateAT, rateCG, rateCT, piA, piC, piG, piT)
 
       val probs = Array(
-      model.substitutionProb(A, A, 0.1),
-      model.substitutionProb(A, C, 0.1),
-      model.substitutionProb(A, G, 0.1),
-      model.substitutionProb(A, T, 0.1))
+      model.substitutionProb(A, A, 10),
+      model.substitutionProb(A, C, 10),
+      model.substitutionProb(A, G, 10),
+      model.substitutionProb(A, T, 10))
 
       println( probs.mkString(" ") )
       println( probs.sum )

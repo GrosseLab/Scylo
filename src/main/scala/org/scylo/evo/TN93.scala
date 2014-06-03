@@ -32,11 +32,7 @@ case class TN93(statA: Double, statC: Double, statG: Double, statT: Double, tran
 
   def statDist(of: Nuc): Double = stationaryDistribution(of.index)
 
-  def substitutionRate: Double = {
-    multTC * transitionRateCT +
-      multAG * transitionRateAG +
-      2 * plusTC * plusAG * transversionRate
-  }
+  def substitutionRate: Double = multTC * transitionRateCT + multAG * transitionRateAG + 2 * plusTC * plusAG * transversionRate
 
   def distance(seq1: List[Nuc], seq2: List[Nuc]): Option[Double] = {
     import org.scylo._

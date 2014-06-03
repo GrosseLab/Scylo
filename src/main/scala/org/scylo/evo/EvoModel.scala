@@ -15,17 +15,6 @@ trait EvoModel[A] {
   /** Probability of a symbol in the stationary distribution. */
   def statDist( of: A ): Double
 
-  /** Evolutionary distance of two sequences. 
-    * 
-    * In case the sequences are too divergent, a distance might not be
-    * defined in an evolutionary model.
-    * 
-    * @param seq1 a sequence
-    * @param seq2 a sequence
-    * @return evolutionary distance
-    */
-  def distance( seq1: List[A], seq2: List[A] ): Option[Double]
-
   /** Probability of a substituion in a given time.
     * 
     * @param from symbol to evolve from

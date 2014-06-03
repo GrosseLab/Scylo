@@ -20,7 +20,6 @@ case class BranchSlide(delta: Double) extends TreeOperator {
         Leaf(leafs.head)
       } else {
         val (min, indexOfMin) = minWithIndex(heights)
-        println( s"$min at $indexOfMin" )
         val (leftHeights, rightHeights) = heights.splitAt(indexOfMin) // min goes to right
         val (leftLeafs, rightLeafs) = leafs.splitAt((leftHeights.size + 1) / 2)
         Branch(
