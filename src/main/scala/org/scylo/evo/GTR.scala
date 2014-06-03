@@ -1,5 +1,7 @@
 package org.scylo.evo
 
+import org.scylo.bio.{Nuc,DNA}
+
 /**
  *
  * @param rateAC instantanious substitution rate from A to C (a)
@@ -9,7 +11,8 @@ package org.scylo.evo
  * @param rateCT instantanious substitution rate from C to T (e)
  * @param pi stationary distribution of (A, C, G, T)
  */
-case class GTR(rateAC: Double, rateAG: Double, rateAT: Double, rateCG: Double, rateCT: Double, piA: Double, piC: Double, piG: Double, piT: Double) {
+case class GTR(rateAC: Double, rateAG: Double, rateAT: Double, rateCG: Double, rateCT: Double, statA: Double, statC: Double, statG: Double, statT: Double) 
+    extends EvoModel[Nuc] {
 
   import math._
   import org.ejml.data.DenseMatrix64F
@@ -17,35 +20,35 @@ case class GTR(rateAC: Double, rateAG: Double, rateAT: Double, rateCG: Double, r
   def this(rateAC: Double, rateAG: Double, rateAT: Double, rateCG: Double, rateCT: Double, pi: Array[Double]) =
     this(rateAC, rateAG, rateAT, rateCG, rateCT, pi(0), pi(1), pi(2), pi(3))
 
-  require(abs(piA + piC + piG + piT - 1) <= 1E-10)
+  require(abs(statA + statC + statG + statT - 1) <= 1E-10)
 
-  val (left, right, lambda) = {
+  private val stat = Array(statA, statC,statG, statT)
+
+  private val (left, right, lambda) = {
     import org.ejml.ops.CommonOps
     import org.ejml.ops.EigenOps
     import org.ejml.factory.DecompositionFactory
 
     val rateGT = 1.0
-    val diagA = -(rateAC * piC + rateAG * piG + rateAT * piT)
-    val diagC = -(rateAC * piA + rateCG * piG + rateCT * piT)
-    val diagG = -(rateAG * piA + rateCG * piC + rateGT * piT)
-    val diagT = -(rateAT * piA + rateCT * piC + rateGT * piG)
+    val diagA = -(rateAC * statC + rateAG * statG + rateAT * statT)
+    val diagC = -(rateAC * statA + rateCG * statG + rateCT * statT)
+    val diagG = -(rateAG * statA + rateCG * statC + rateGT * statT)
+    val diagT = -(rateAT * statA + rateCT * statC + rateGT * statG)
 
-    val scale = -(piA * diagA + piC * diagC + piG * diagG + piT * diagT)
-    val piAs = sqrt(piA)
-    val piCs = sqrt(piC)
-    val piGs = sqrt(piG)
-    val piTs = sqrt(piT)
+    val scale = -(statA * diagA + statC * diagC + statG * diagG + statT * diagT)
+    val piAs = sqrt(statA)
+    val piCs = sqrt(statC)
+    val piGs = sqrt(statG)
+    val piTs = sqrt(statT)
 
     val scaledQ = new DenseMatrix64F(Array(
-      Array(diagA / scale, rateAC * piC / scale, rateAG * piG / scale, rateAT * piT / scale),
-      Array(rateAC * piA / scale, diagC / scale, rateCG * piG / scale, rateCT * piT / scale),
-      Array(rateAG * piA / scale, rateCG * piC / scale, diagC / scale, rateGT * piT / scale),
-      Array(rateAT * piA / scale, rateCT * piC / scale, rateGT * piG / scale, diagT /scale )))
+      Array(diagA / scale, rateAC * statC / scale, rateAG * statG / scale, rateAT * statT / scale),
+      Array(rateAC * statA / scale, diagC / scale, rateCG * statG / scale, rateCT * statT / scale),
+      Array(rateAG * statA / scale, rateCG * statC / scale, diagG / scale, rateGT * statT / scale),
+      Array(rateAT * statA / scale, rateCT * statC / scale, rateGT * statG / scale, diagT /scale )))
 
     leftMult(scaledQ, Array(piAs, piCs, piGs, piTs))
     rightMult(scaledQ, Array(1.0 / piAs, 1.0 / piCs, 1.0 / piGs, 1.0 / piTs))
-
-    println( scaledQ.print )
 
     val comp = DecompositionFactory.eig(4, true, true) // need eigen vectors, matrix is symmetric
     comp.decompose( scaledQ )
@@ -60,7 +63,10 @@ case class GTR(rateAC: Double, rateAG: Double, rateAT: Double, rateCG: Double, r
     (r, ri, EigenOps.createMatrixD( comp ) )
   }
 
-  import org.scylo.bio.Nuc
+  def alphabet = DNA
+
+  def statDist( of: Nuc ): Double = stat( of.index )
+
   def substitutionProb(from: Nuc, to: Nuc, time: Double): Double = {
     val i = from.index
     val j = to.index
@@ -73,19 +79,7 @@ case class GTR(rateAC: Double, rateAG: Double, rateAT: Double, rateCG: Double, r
     result
   }
 
-  private def rowSum(mat: DenseMatrix64F): Array[Double] = {
-    val sums = new Array[Double](mat.numCols)
-    var i, j = 0
-    while (i < mat.numCols) {
-      j = 0
-      while (j < mat.numRows) {
-        sums(i) += mat.get(i, j)
-        j += 1
-      }
-      i += 1
-    }
-    sums
-  }
+  def >> (time: Double) = null
 
   /** in-place multiplication. Columnwise */
   private def leftMult(mat: DenseMatrix64F, diag: Array[Double]): Unit = {

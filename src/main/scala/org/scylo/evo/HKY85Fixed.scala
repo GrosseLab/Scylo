@@ -45,7 +45,7 @@ case class HKY85Fixed(statA: Double, statC: Double, statG: Double, statT: Double
         (1 - e2) * statT), // G -> T
       Array(
         (1 - e2) * statA, // T -> A
-        statC * (1 - 1.0 / statY * e2 + statR / statY * e2), // T -> C
+        statC * (1 - 1.0 / statY * e3 + statR / statY * e2), // T -> C
         (1 - e2) * statG, // T -> G
         statT + statC / statY * e3 + statT * statR / statY * e2 // T -> T
         ))

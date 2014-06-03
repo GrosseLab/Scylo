@@ -9,9 +9,6 @@ trait EvoModel[A] {
   /** Alphabet of the symbols. */
   def alphabet: Alphabet[A]
 
-  /** Rate of substituions */
-  def substitutionRate: Double
-
   /** Probability of a symbol in the stationary distribution. */
   def statDist( of: A ): Double
 

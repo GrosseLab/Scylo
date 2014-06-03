@@ -14,10 +14,10 @@ class TN93Test extends FunSpec with Matchers with GeneratorDrivenPropertyChecks 
   describe("The Tamura-Nei model") {
     it("forms proper probability distributions.") {
       forAll( (TN93Gen, "TN93 model"), (Gen.choose(0.0, maxTime), "time") ) { (tam: TN93, time: Double) =>
-        DNA.elements.map { to => tam |?| (A, to, time) }.sum should be(1.0 +- 1E-15)
-        DNA.elements.map { to => tam |?| (C, to, time) }.sum should be(1.0 +- 1E-15)
-        DNA.elements.map { to => tam |?| (G, to, time) }.sum should be(1.0 +- 1E-15)
-        DNA.elements.map { to => tam |?| (T, to, time) }.sum should be(1.0 +- 1E-15)
+        DNA.elements.map { to => tam |?| (A, to, time) }.sum should be(1.0 +- 1E-14)
+        DNA.elements.map { to => tam |?| (C, to, time) }.sum should be(1.0 +- 1E-14)
+        DNA.elements.map { to => tam |?| (G, to, time) }.sum should be(1.0 +- 1E-14)
+        DNA.elements.map { to => tam |?| (T, to, time) }.sum should be(1.0 +- 1E-14)
       }
     }
   }

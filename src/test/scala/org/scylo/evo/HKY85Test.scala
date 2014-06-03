@@ -15,12 +15,12 @@ class HKY85Test extends FunSpec with Matchers with GeneratorDrivenPropertyChecks
   describe("The HKY model") {
 
     it("forms proper probability distributions.") {
-      forAll((HKY85Gen, "HKY model"), (Gen.choose(0.0, 200.0), "time")) { (jc: HKY85, time: Double) =>
+      forAll((HKY85Gen, "HKY model"), (Gen.choose(0.0, 200.0), "time")) { (hky: HKY85, time: Double) =>
         /** Make sure the transition probabilities some to one. */
-        DNA.elements.map { to => jc |?| (A, to, time) }.sum should be(1.0 +- 1E-15)
-        DNA.elements.map { to => jc |?| (C, to, time) }.sum should be(1.0 +- 1E-15)
-        DNA.elements.map { to => jc |?| (G, to, time) }.sum should be(1.0 +- 1E-15)
-        DNA.elements.map { to => jc |?| (T, to, time) }.sum should be(1.0 +- 1E-15)
+        DNA.elements.map { to => hky |?| (A, to, time) }.sum should be(1.0 +- 1E-15)
+        DNA.elements.map { to => hky |?| (C, to, time) }.sum should be(1.0 +- 1E-15)
+        DNA.elements.map { to => hky |?| (G, to, time) }.sum should be(1.0 +- 1E-15)
+        DNA.elements.map { to => hky |?| (T, to, time) }.sum should be(1.0 +- 1E-15)
       }
     }
   }

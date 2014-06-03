@@ -23,41 +23,32 @@ class F81Test extends FunSpec with Matchers with GeneratorDrivenPropertyChecks {
     }
 
     it("is a special case of the TN93 model.") {
-
-      val felsenstein = F81( 0.3, 0.2, 0.2, 0.3, 0.05)
-      val aF = felsenstein.substitutionProb(A, A, 10)
-      val cF = felsenstein.substitutionProb(A, C, 10)
-      val gF = felsenstein.substitutionProb(A, G, 10)
-      val tF = felsenstein.substitutionProb(A, T, 10)
-
-      val tamura = TN93( 0.3, 0.2, 0.2, 0.3, 0.05, 0.05, 0.05)
-      val aT = tamura.substitutionProb(A, A, 10) 
-      val cT = tamura.substitutionProb(A, C, 10) 
-      val gT = tamura.substitutionProb(A, G, 10) 
-      val tT = tamura.substitutionProb(A, T, 10)
-
-      aF should be(aT +- 1E-15)
-      cF should be(cT +- 1E-15)
-      gF should be(gT +- 1E-15)
-      tF should be(tT +- 1E-15)
-      felsenstein.substitutionRate should be( tamura.substitutionRate +- 1E10)
-      // ADD CHECKS THAT THE DISTANCE ALSO MATCH
-
-    } 
-  }
-
-    describe("The Felsenstein 81 model") {
-
-      it("computes the same probabilities as F81 with given time.") {
-        forAll(
-          (F81GenFixed, "Felsenstein 81 model"),
-          (Gen.oneOf(A, C, G, T), "from"),
-          (Gen.oneOf(A, C, G, T), "to")) { (felsf: F81Fixed, from: Nuc, to: Nuc) =>
-          /** Make sure both models compute the same probabilities. */
-          felsf |?| (from, to) should be(felsf.unfix |?| (from, to, felsf.time))
-        }
+      forAll( (F81Gen, "F81 model"), (Gen.choose(0.0, maxTime), "time") ) { (fels: F81, time: Double) =>
+        val rate = fels.substitutionRate 
+        val tamura = TN93(fels.statA, fels.statC, fels.statG, fels.statT, rate, rate, rate)
+        /** The tolerance is set to 1E-14 because the probabilities are
+          * calculated using different formulas resulting small
+          * floating points errors.*/
+        DNA.elements.foreach { to => fels |?| (A, to, time) should be(tamura.substitutionProb(A, to, time) +- 1E-14) }
+        DNA.elements.foreach { to => fels |?| (C, to, time) should be(tamura.substitutionProb(C, to, time) +- 1E-14) }
+        DNA.elements.foreach { to => fels |?| (G, to, time) should be(tamura.substitutionProb(G, to, time) +- 1E-14) }
+        DNA.elements.foreach { to => fels |?| (T, to, time) should be(tamura.substitutionProb(T, to, time) +- 1E-14) }
       }
     }
+  }
+
+  describe("The Felsenstein 81 model") {
+
+    it("computes the same probabilities as F81 with given time.") {
+      forAll(
+        (F81GenFixed, "Felsenstein 81 model"),
+        (Gen.oneOf(A, C, G, T), "from"),
+        (Gen.oneOf(A, C, G, T), "to")) { (felsf: F81Fixed, from: Nuc, to: Nuc) =>
+        /** Make sure both models compute the same probabilities. */
+        felsf |?| (from, to) should be(felsf.unfix |?| (from, to, felsf.time))
+      }
+    }
+  }
 }
 
 object F81Test {

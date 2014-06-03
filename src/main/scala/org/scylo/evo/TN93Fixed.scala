@@ -22,34 +22,34 @@ case class TN93Fixed(statA: Double, statC: Double, statG: Double, statT: Double,
 
   private val transitionProbs = {
 
-    val statAG = statA + statG // piR
-    val statCT = statC + statT // piY
+    val statR = statA + statG // piR
+    val statY = statC + statT // piY
 
     val e2 = exp(-transversionRate * time)
-    val e3 = exp(-(statAG * transitionRateAG + statCT * transversionRate) * time)
-    val e4 = exp(-(statCT * transitionRateCT + statAG * transversionRate) * time)
+    val e3 = exp(-(statR * transitionRateAG + statY * transversionRate) * time)
+    val e4 = exp(-(statY * transitionRateCT + statR * transversionRate) * time)
 
     Array(
       Array(
-        statA + statA * statCT / statAG * e2 + statG / statAG * e3, // A -> A
+        statA + statA * statY / statR * e2 + statG / statR * e3, // A -> A
         statC * (1 - e2), // A -> C
-        statG + statG * statCT / statAG * e2 - statG / statAG * e3, // A -> G
+        statG + statG * statY / statR * e2 - statG / statR * e3, // A -> G
         statT * (1 - e2)), // A -> T
       Array(
         statA * (1 - e2), // C -> A
-        statC + statC * statAG / statCT * e2 + statT / statCT * e4, // C -> C
+        statC + statC * statR / statY * e2 + statT / statY * e4, // C -> C
         statG * (1 - e2), // C -> G
-        statT + statT * statAG / statCT * e2 - statT / statCT * e4), // C -> T
+        statT + statT * statR / statY * e2 - statT / statY * e4), // C -> T
       Array(
-        statA + statA * statCT / statAG * e2 - statA/statAG * e3, // G -> A
+        statA + statA * statY / statR * e2 - statA/statR * e3, // G -> A
         statC * ( 1 - e2), // G -> C
-        statG + statG * statCT / statAG * e2 + statA/statAG * e3, // G -> G
+        statG + statG * statY / statR * e2 + statA/statR * e3, // G -> G
         statT * ( 1 - e2)), // G -> T
       Array(
         statA * (1 - e2), // T -> A
-        statC + statC * statAG / statCT * e2 - statC / statCT * e4, // T -> C
+        statC + statC * statR / statY * e2 - statC / statY * e4, // T -> C
         statG * (1 - e2), // T -> G
-        statT + statT * statAG / statCT * e2 + statC / statCT * e4 // T -> T
+        statT + statT * statR / statY * e2 + statC / statY * e4 // T -> T
         ))
   }
 
